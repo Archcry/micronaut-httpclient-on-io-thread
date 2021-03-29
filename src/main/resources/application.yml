@@ -1,0 +1,10 @@
+micronaut:
+  application:
+    name: rxjava
+  server:
+    port: 8080
+  http:
+    services:
+      hello:
+        urls:
+          - http://localhost:8080
