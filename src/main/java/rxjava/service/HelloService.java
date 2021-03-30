@@ -4,6 +4,8 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rxjava.client.HelloClient;
 
 import javax.inject.Named;
@@ -15,6 +17,8 @@ public class HelloService {
     private final HelloClient helloClient;
     private final Scheduler scheduler;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(HelloService.class);
+
     public HelloService(final HelloClient helloClient, final @Named(TaskExecutors.IO) ExecutorService executorService) {
         this.helloClient = helloClient;
         this.scheduler = Schedulers.from(executorService);
@@ -24,7 +28,7 @@ public class HelloService {
         return helloClient.getHello()
             .subscribeOn(scheduler)
             .toObservable()
-            .doOnNext(a -> System.out.println(Thread.currentThread().getName()))
+            .doOnNext(a -> LOGGER.info(Thread.currentThread().getName()))
             .firstOrError();
     }
 
@@ -32,7 +36,7 @@ public class HelloService {
         return Single.fromCallable(helloClient::getHello2)
             .subscribeOn(scheduler)
             .toObservable()
-            .doOnNext(a -> System.out.println(Thread.currentThread().getName()))
+            .doOnNext(a -> LOGGER.info(Thread.currentThread().getName()))
             .firstOrError();
     }
 }
